@@ -11,8 +11,13 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,7 +29,7 @@ public class FileStorageService {
 
     private static Logger logger = LoggerFactory.getLogger(FileStorageService.class);
 
-    private final Path fileStorageLocation;
+    public final Path fileStorageLocation;
 
     @Autowired
     public FileStorageService(FileStorageProperties fileStorageProperties) {
@@ -59,17 +64,32 @@ public class FileStorageService {
         }
     }
 
-    public Resource loadFileAsResource(String fileName) {
+    public Resource loadFileAsResource(String fileName)  {
+    	
         try {
             Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
             Resource resource = new UrlResource(filePath.toUri());
+            
+            logger.debug(resource.getFilename());
             if(resource.exists()) {
-                return resource;
-            } else {
+            	return resource;
+            }else {
                 throw new MyFileNotFoundException("File not found " + fileName);
+
             }
+            
         } catch (MalformedURLException ex) {
             throw new MyFileNotFoundException("File not found " + fileName, ex);
+            
         }
+ 
+    }
+    
+    
+    
+    public InputStream loadFileAsStream(String fileName) throws FileNotFoundException {
+        InputStream inputStream = new FileInputStream(new File(this.fileStorageLocation.resolve(fileName).normalize().toString())); //load the file
+		return inputStream;
+
     }
 }
