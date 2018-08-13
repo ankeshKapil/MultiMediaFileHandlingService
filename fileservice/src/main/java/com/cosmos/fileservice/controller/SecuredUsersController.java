@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cosmos.fileservice.domain.User;
 import com.cosmos.fileservice.service.UserAuthenticationService;
 
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 
+@ApiOperation(value="Secured user API",hidden=true)
 @RestController
 @RequestMapping("/users")
 @FieldDefaults(level = PRIVATE, makeFinal = true)
@@ -28,6 +30,7 @@ final class SecuredUsersController {
     return user;
   }
 
+  @ApiOperation(value="logout not required from server end",hidden=true)
   @GetMapping("/logout")
   boolean logout(@AuthenticationPrincipal final User user) {
     authentication.logout(user);

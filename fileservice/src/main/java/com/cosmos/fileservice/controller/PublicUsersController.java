@@ -28,7 +28,8 @@ final class PublicUsersController {
   @NonNull
   UserCrudService users;
 
-  @ApiOperation(value="register new user to the server")
+  @ApiOperation(value="register new user to the server",hidden=true)
+ 
   @PostMapping("/register")
   String register(
     @RequestParam("username") final String username,
